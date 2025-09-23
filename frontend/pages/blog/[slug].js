@@ -247,110 +247,114 @@ function BlogDetailPage({ initialBlog = null, relatedArticles = [] }) {
       <Header />
       <main>
         {/* Breadcrumb */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <nav className="flex items-center space-x-2 text-sm text-navy-500">
-              <Link href="/" className="hover:text-primary-500">Home</Link>
-              <ChevronRight className="h-4 w-4" />
-              <Link href="/" className="hover:text-primary-500">Blog</Link>
+        <nav className="bg-gray-50 py-4 border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ul className="flex items-center text-sm text-gray-600">
+              <li>
+                <Link href="/" className="text-orange-500 hover:text-orange-600 transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li className="mx-2">/</li>
               {blog.category && (
                 <>
-                  <ChevronRight className="h-4 w-4" />
-                  <Link 
-                    href={`/category/${blog.category.slug}`} 
-                    className="hover:text-primary-500"
-                  >
-                    {blog.category.name}
-                  </Link>
+                  <li>
+                    <span className="text-gray-600">{blog.category.name || 'Fiction'}</span>
+                  </li>
+                  <li className="mx-2">/</li>
                 </>
               )}
-              <ChevronRight className="h-4 w-4" />
-              <span className="text-navy-700 font-medium truncate">{blog.title}</span>
-            </nav>
+              <li>
+                <span className="text-gray-800 font-medium truncate">{blog.title}</span>
+              </li>
+            </ul>
           </div>
-        </div>
+        </nav>
 
-        {/* Hero Section */}
-        <section className="bg-white py-12">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Article Hero Section */}
+        <section className="bg-gradient-to-br from-gray-50 to-white py-12 lg:py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             {/* Category Tag */}
             {blog.category && (
               <div className="mb-6">
-                <Link href={`/category/${blog.category.slug}`}>
-                  <span className="bg-primary-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-primary-600 transition-colors duration-200">
-                    {blog.category.name}
-                  </span>
-                </Link>
+                <span className="inline-block bg-teal-500 text-white px-4 py-2 rounded-full text-sm font-medium uppercase tracking-wider">
+                  {blog.category.name || 'Fiction'}
+                </span>
               </div>
             )}
 
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl font-bold text-navy-800 mb-8 leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-8 leading-tight font-serif">
               {blog.title}
             </h1>
 
             {/* Meta Information */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-navy-600 mb-8">
+            <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center">
-                <Calendar className="h-4 w-4 mr-2" />
+                <Calendar className="h-4 w-4 mr-2 text-orange-500" />
                 <span>{utils.formatDate(blog.created_at)}</span>
               </div>
               <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-2" />
+                <Clock className="h-4 w-4 mr-2 text-orange-500" />
                 <span>{readTime} min read</span>
               </div>
               <div className="flex items-center">
-                <Eye className="h-4 w-4 mr-2" />
+                <Eye className="h-4 w-4 mr-2 text-orange-500" />
                 <span>{blog.view_count || 0} views</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Featured Images Section */}
+        {/* 2-Column Photo Grid */}
         <section className="py-8">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <img
-                src={blog.featured_image || defaultImage}
-                alt={blog.title}
-                onError={(e) => {
-                  if (e.target.src !== defaultImage) {
+              <div className="aspect-[4/3] overflow-hidden rounded-xl shadow-lg">
+                <img
+                  src={blog.featured_image || defaultImage}
+                  alt={blog.title}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  onError={(e) => {
+                    if (e.target.src !== defaultImage) {
+                      e.target.src = defaultImage
+                    }
+                  }}
+                />
+              </div>
+              <div className="aspect-[4/3] overflow-hidden rounded-xl shadow-lg">
+                <img
+                  src={blog.featured_image_2 || blog.featured_image || defaultImage}
+                  alt={`${blog.title} - Image 2`}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  onError={(e) => {
                     e.target.src = defaultImage
-                  }
-                }}
-                
-              />
-              <img
-                src={blog.featured_image_2 || blog.featured_image || defaultImage}
-                alt={`${blog.title} - Image 2`}
-                className="w-full h-64 md:h-80 object-cover rounded-xl shadow-lg"
-                onError={(e) => {
-                  e.target.src = defaultImage
-                }}
-              />
+                  }}
+                />
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Main Content with Sidebar */}
+        {/* Article Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Sidebar - Table of Contents */}
-            <aside className="lg:col-span-3 order-2 lg:order-1">
-              <div className="sticky top-24">
+            {/* Main Content */}
+            <article className="lg:col-span-8 order-1">
+              <div className="bg-white rounded-xl shadow-lg p-6 lg:p-8">
+                {/* Table of Contents */}
                 {tableOfContents.length > 0 && (
-                  <div className="bg-white rounded-xl shadow-lg p-6">
-                    <h3 className="text-lg font-semibold text-navy-800 mb-4">Table of Contents</h3>
+                  <div className="bg-gray-50 rounded-lg p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Table of Contents</h3>
                     <nav className="space-y-2">
                       {tableOfContents.map((heading, index) => (
                         <button
                           key={index}
                           onClick={() => scrollToHeading(heading.id)}
-                          className={`block w-full text-left text-sm hover:text-primary-600 transition-colors duration-200 ${
+                          className={`block w-full text-left text-sm hover:text-orange-600 transition-colors duration-200 ${
                             heading.level === 2 
-                              ? 'font-medium text-navy-700' 
-                              : 'pl-4 text-navy-600'
+                              ? 'font-medium text-gray-700' 
+                              : 'pl-4 text-gray-600'
                           }`}
                         >
                           {heading.text}
@@ -359,27 +363,23 @@ function BlogDetailPage({ initialBlog = null, relatedArticles = [] }) {
                     </nav>
                   </div>
                 )}
-              </div>
-            </aside>
 
-            {/* Main Content */}
-            <main className="lg:col-span-6 order-1 lg:order-2">
-              <article className="bg-white rounded-xl shadow-lg p-8">
+                {/* Article Body */}
                 <div 
-                  className="article-content prose prose-lg max-w-none"
+                  className="article-content prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-orange-600 prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-4 prose-blockquote:border-orange-500 prose-blockquote:bg-orange-50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg"
                   dangerouslySetInnerHTML={{ __html: processContent(blog.content) }}
                 />
 
                 {/* Tags */}
                 {blog.tags && blog.tags.length > 0 && (
                   <div className="mt-12 pt-8 border-t border-gray-200">
-                    <h4 className="text-lg font-semibold text-navy-800 mb-4">Tags</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Tags:</h4>
                     <div className="flex flex-wrap gap-2">
                       {blog.tags.map((tag, index) => (
                         <button
                           key={index}
                           onClick={() => handleTagClick(tag)}
-                          className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary-50 text-primary-700 hover:bg-primary-100 transition-colors duration-200"
+                          className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
                         >
                           <Tag className="h-3 w-3 mr-1" />
                           {tag.trim()}
@@ -389,40 +389,40 @@ function BlogDetailPage({ initialBlog = null, relatedArticles = [] }) {
                   </div>
                 )}
 
-                {/* Share Buttons */}
+                {/* Social Share (Bottom) */}
                 <div className="mt-8 pt-8 border-t border-gray-200">
-                  <h4 className="text-lg font-semibold text-navy-800 mb-4">Share this article</h4>
-                  <div className="flex items-center space-x-4">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Share this article</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <a
                       href={shareLinks.facebook}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                      className="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium"
                     >
                       <Facebook className="h-4 w-4 mr-2" />
-                      Facebook
+                      Share on Facebook
                     </a>
                     <a
                       href={shareLinks.twitter}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors duration-200"
+                      className="flex items-center justify-center px-4 py-3 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors duration-200 text-sm font-medium"
                     >
                       <Twitter className="h-4 w-4 mr-2" />
-                      Twitter
+                      Share on Twitter
                     </a>
                     <a
                       href={shareLinks.whatsapp}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+                      className="flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium"
                     >
                       <MessageSquare className="h-4 w-4 mr-2" />
-                      WhatsApp
+                      Share on WhatsApp
                     </a>
                     <button
                       onClick={copyToClipboard}
-                      className={`flex items-center px-4 py-2 rounded-lg transition-colors duration-200 ${
+                      className={`flex items-center justify-center px-4 py-3 rounded-lg transition-colors duration-200 text-sm font-medium ${
                         copySuccess 
                           ? 'bg-green-600 text-white' 
                           : 'bg-gray-600 text-white hover:bg-gray-700'
@@ -433,43 +433,87 @@ function BlogDetailPage({ initialBlog = null, relatedArticles = [] }) {
                     </button>
                   </div>
                 </div>
-              </article>
-            </main>
+              </div>
+            </article>
 
-            {/* Right Sidebar - Related Books */}
-            <aside className="lg:col-span-3 order-3">
+            {/* Article Sidebar - Related Books */}
+            <aside className="lg:col-span-4 order-2">
               <div className="sticky top-24">
-                {relatedBooks.length > 0 && (
-                  <div className="bg-white rounded-xl shadow-lg p-6">
-                    <h3 className="text-lg font-semibold text-navy-800 mb-6">Related Books</h3>
-                    <div className="space-y-6">
-                      {relatedBooks.map((book) => (
-                        <div key={book.id} className="border-b border-gray-100 pb-6 last:border-b-0 last:pb-0">
-                          <h4 className="font-semibold text-navy-800 mb-2 text-sm leading-tight">
-                            {book.title}
-                          </h4>
-                          {book.description && (
-                            <p className="text-navy-600 text-xs mb-3 leading-relaxed">
-                              {book.description}
-                            </p>
-                          )}
-                          {book.price && (
-                            <p className="text-primary-600 font-bold mb-3 text-sm">{book.price}</p>
-                          )}
-                          <a
-                            href={book.purchase_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center text-primary-500 hover:text-primary-600 font-medium text-sm transition-colors duration-200 group"
-                          >
-                            Purchase Book
-                            <ExternalLink className="ml-1 h-3 w-3 group-hover:scale-110 transition-transform duration-200" />
-                          </a>
+                <div className="bg-white rounded-xl shadow-lg p-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-6">Related Books</h4>
+                  <div className="space-y-4">
+                    {/* Static Related Books for Design - Replace with dynamic content */}
+                    {relatedBooks.length > 0 ? relatedBooks.map((book) => (
+                      <div key={book.id} className="flex gap-3 pb-4 border-b border-gray-100 last:border-b-0 last:pb-0">
+                        <div className="w-12 h-16 bg-gray-200 rounded flex-shrink-0 bg-cover bg-center" 
+                             style={{backgroundImage: `url(${book.image || 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=80&h=120&fit=crop&crop=center'})`}}>
                         </div>
-                      ))}
-                    </div>
+                        <div className="flex-1 min-w-0">
+                          <h5 className="font-medium text-gray-900 text-sm leading-tight mb-1">{book.title}</h5>
+                          <p className="text-orange-600 font-semibold text-sm">{book.price}</p>
+                        </div>
+                      </div>
+                    )) : (
+                      // Static fallback books for design purposes
+                      <>
+                        <div className="flex gap-3 pb-4 border-b border-gray-100">
+                          <div className="w-12 h-16 bg-gray-200 rounded flex-shrink-0 bg-cover bg-center" 
+                               style={{backgroundImage: 'url(https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=80&h=120&fit=crop&crop=center)'}}>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-medium text-gray-900 text-sm leading-tight mb-1">The Silent Patient</h5>
+                            <p className="text-orange-600 font-semibold text-sm">$24.99</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3 pb-4 border-b border-gray-100">
+                          <div className="w-12 h-16 bg-gray-200 rounded flex-shrink-0 bg-cover bg-center" 
+                               style={{backgroundImage: 'url(https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=80&h=120&fit=crop&crop=center)'}}>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-medium text-gray-900 text-sm leading-tight mb-1">Atomic Habits</h5>
+                            <p className="text-orange-600 font-semibold text-sm">$19.99</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3 pb-4 border-b border-gray-100">
+                          <div className="w-12 h-16 bg-gray-200 rounded flex-shrink-0 bg-cover bg-center" 
+                               style={{backgroundImage: 'url(https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=80&h=120&fit=crop&crop=center)'}}>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-medium text-gray-900 text-sm leading-tight mb-1">The Seven Moons</h5>
+                            <p className="text-orange-600 font-semibold text-sm">$22.50</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3 pb-4 border-b border-gray-100">
+                          <div className="w-12 h-16 bg-gray-200 rounded flex-shrink-0 bg-cover bg-center" 
+                               style={{backgroundImage: 'url(https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=80&h=120&fit=crop&crop=center)'}}>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-medium text-gray-900 text-sm leading-tight mb-1">Literary Journeys</h5>
+                            <p className="text-orange-600 font-semibold text-sm">$18.99</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3 pb-4 border-b border-gray-100">
+                          <div className="w-12 h-16 bg-gray-200 rounded flex-shrink-0 bg-cover bg-center" 
+                               style={{backgroundImage: 'url(https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=80&h=120&fit=crop&crop=center)'}}>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-medium text-gray-900 text-sm leading-tight mb-1">Science Books</h5>
+                            <p className="text-orange-600 font-semibold text-sm">$26.99</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-3">
+                          <div className="w-12 h-16 bg-gray-200 rounded flex-shrink-0 bg-cover bg-center" 
+                               style={{backgroundImage: 'url(https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=80&h=120&fit=crop&crop=center)'}}>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-medium text-gray-900 text-sm leading-tight mb-1">Personal Library</h5>
+                            <p className="text-orange-600 font-semibold text-sm">$21.99</p>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </aside>
           </div>
@@ -479,7 +523,7 @@ function BlogDetailPage({ initialBlog = null, relatedArticles = [] }) {
         {relatedArticles && relatedArticles.length > 0 && (
           <section className="bg-gray-50 py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-navy-800 mb-12 text-center">Related Articles</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Related Articles</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {displayedRelatedArticles.map((article) => (
@@ -496,14 +540,14 @@ function BlogDetailPage({ initialBlog = null, relatedArticles = [] }) {
                         />
                       </div>
                       <div className="p-6">
-                        <h3 className="font-bold text-navy-800 mb-3 line-clamp-2 hover:text-primary-600 transition-colors">
+                        <h3 className="font-bold text-gray-900 mb-3 line-clamp-2 hover:text-orange-600 transition-colors">
                           {article.title}
                         </h3>
-                        <p className="text-navy-600 text-sm mb-4 line-clamp-3">
+                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                           {article.excerpt}
                         </p>
-                        <div className="flex items-center text-xs text-navy-400">
-                          <Calendar className="h-3   w-3 mr-1" />
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Calendar className="h-3 w-3 mr-1" />
                           <span>{utils.formatDate(article.created_at)}</span>
                           <span className="mx-2">•</span>
                           <Eye className="h-3 w-3 mr-1" />
@@ -519,9 +563,10 @@ function BlogDetailPage({ initialBlog = null, relatedArticles = [] }) {
                 <div className="text-center mt-8">
                   <button
                     onClick={() => setShowMoreRelated(!showMoreRelated)}
-                    className="btn-secondary"
+                    className="inline-flex items-center px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors duration-200 font-medium"
                   >
-                    {showMoreRelated ? 'See Less' : 'See More'}
+                    <span className="mr-2">{showMoreRelated ? 'Load Less Articles' : 'Load More Articles'}</span>
+                    <ChevronRight className={`h-4 w-4 transform transition-transform ${showMoreRelated ? 'rotate-90' : 'rotate-0'}`} />
                   </button>
                 </div>
               )}
@@ -532,14 +577,11 @@ function BlogDetailPage({ initialBlog = null, relatedArticles = [] }) {
         {/* Feedback Section */}
         <section className="py-16">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 className="text-2xl font-bold text-navy-800 mb-6">Was this article helpful?</h3>
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Was this article helpful?</h3>
             
             {feedback ? (
               <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                <p className="text-green-800 font-medium">
-                  Thank you for your feedback! 
-                  {feedback === 'yes' ? ' We\'re glad you found it helpful.' : ' We\'ll work on improving our content.'}
-                </p>
+                <p className="text-green-800 font-medium">Thank you for your feedback!</p>
               </div>
             ) : (
               <div className="flex justify-center space-x-4">
@@ -548,14 +590,14 @@ function BlogDetailPage({ initialBlog = null, relatedArticles = [] }) {
                   className="flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
                 >
                   <ThumbsUp className="h-5 w-5 mr-2" />
-                  Yes, it was helpful
+                  <span>Yes</span>
                 </button>
                 <button
                   onClick={() => handleFeedback('no')}
                   className="flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
                 >
                   <ThumbsDown className="h-5 w-5 mr-2" />
-                  No, it wasn't helpful
+                  <span>No</span>
                 </button>
               </div>
             )}
