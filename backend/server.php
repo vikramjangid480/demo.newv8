@@ -13,9 +13,21 @@ $uri = parse_url($requestUri, PHP_URL_PATH);
 error_log("Parsed URI: {$uri}");
 
 // Handle CORS for all requests
-header("Access-Control-Allow-Origin: *");
+// Allow specific origin for credentials support
+$allowed_origins = [
+    'http://localhost:5173', 
+    'http://localhost:3000',
+    'https://5173-iq9abdo2yhfwmqk1zcz4h-6532622b.e2b.dev'
+];
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowed_origins)) {
+    header("Access-Control-Allow-Origin: $origin");
+} else {
+    header("Access-Control-Allow-Origin: http://localhost:5173");
+}
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
 // Handle preflight OPTIONS request
 if ($requestMethod === 'OPTIONS') {
@@ -66,7 +78,12 @@ if ($uri === '/api/blogs' ||
         break;
     
     case '/api/auth/login':
-        require_once 'login.php';
+        // Use test version when database is not available
+        if (file_exists('login_test.php')) {
+            require_once 'login_test.php';
+        } else {
+            require_once 'login.php';
+        }
         break;
     
     default:

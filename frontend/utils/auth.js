@@ -5,7 +5,9 @@ export const authAPI = {
   // Login
   login: async (credentials) => {
     try {
-      const response = await axios.post('/api/auth/login', credentials)
+      const response = await axios.post('/api/auth/login', credentials, {
+        withCredentials: true
+      })
       return response.data
     } catch (error) {
       throw error.response?.data || { success: false, message: 'Login failed' }
@@ -15,7 +17,9 @@ export const authAPI = {
   // Check login status
   checkStatus: async () => {
     try {
-      const response = await axios.get('/api/auth/login')
+      const response = await axios.get('/api/auth/login', {
+        withCredentials: true
+      })
       return response.data
     } catch (error) {
       return { success: false, logged_in: false }
@@ -25,7 +29,9 @@ export const authAPI = {
   // Logout
   logout: async () => {
     try {
-      const response = await axios.delete('/api/auth/login')
+      const response = await axios.delete('/api/auth/login', {
+        withCredentials: true
+      })
       return response.data
     } catch (error) {
       return { success: true } // Even if request fails, consider logout successful

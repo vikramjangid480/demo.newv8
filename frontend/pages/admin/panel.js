@@ -87,7 +87,9 @@ const AdminPanel = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('/api/categories')
+      const response = await axios.get('/api/categories', {
+        withCredentials: true
+      })
       setCategories(response.data.categories || [])
     } catch (error) {
       console.error('Error fetching categories:', error)
@@ -105,7 +107,9 @@ const AdminPanel = () => {
         status: statusFilter === 'all' ? '' : statusFilter
       })
 
-      const response = await axios.get(`/api/blogs?${params}`)
+      const response = await axios.get(`/api/blogs?${params}`, {
+        withCredentials: true
+      })
       setBlogs(response.data.blogs || [])
       setTotalPages(Math.ceil((response.data.total || 0) / 10))
     } catch (error) {
@@ -201,12 +205,14 @@ const AdminPanel = () => {
         // Update existing blog
         formPayload.append('id', editingBlog.id)
         response = await axios.put('/api/admin/blogs', formPayload, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true
         })
       } else {
         // Create new blog
         response = await axios.post('/api/admin/blogs', formPayload, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true
         })
       }
 
@@ -252,7 +258,9 @@ const AdminPanel = () => {
     if (!confirm('Are you sure you want to delete this blog?')) return
 
     try {
-      await axios.delete(`/api/admin/blogs?id=${blogId}`)
+      await axios.delete(`/api/admin/blogs?id=${blogId}`, {
+        withCredentials: true
+      })
       showToast('Blog deleted successfully!')
       fetchBlogs()
     } catch (error) {

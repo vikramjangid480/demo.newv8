@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { authAPI } from '../utils/auth'
 
 const AuthContext = createContext()
 
@@ -15,26 +16,49 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user is stored in localStorage
-    const storedUser = localStorage.getItem('boganto_admin_user')
-    if (storedUser) {
-      try {
-        const userData = JSON.parse(storedUser)
-        setUser(userData)
-      } catch (error) {
-        console.error('Error parsing stored user data:', error)
-        localStorage.removeItem('boganto_admin_user')
-      }
-    }
-    setLoading(false)
+    // Check authentication status from server on load
+    checkAuthStatus()
   }, [])
 
-  const login = (userData) => {
-    setUser(userData)
-    localStorage.setItem('boganto_admin_user', JSON.stringify(userData))
+  const checkAuthStatus = async () => {
+    try {
+      const response = await authAPI.checkStatus()
+      if (response.success && response.logged_in) {
+        setUser(response.user)
+      } else {
+        // Clear any stored user data
+        localStorage.removeItem('boganto_admin_user')
+        setUser(null)
+      }
+    } catch (error) {
+      console.error('Auth check error:', error)
+      setUser(null)
+    }
+    setLoading(false)
   }
 
-  const logout = () => {
+  const login = async (credentials) => {
+    try {
+      const response = await authAPI.login(credentials)
+      if (response.success && response.user) {
+        setUser(response.user)
+        localStorage.setItem('boganto_admin_user', JSON.stringify(response.user))
+        return { success: true, user: response.user }
+      } else {
+        return { success: false, message: response.message || 'Login failed' }
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      return { success: false, message: error.message || 'Login failed' }
+    }
+  }
+
+  const logout = async () => {
+    try {
+      await authAPI.logout()
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
     setUser(null)
     localStorage.removeItem('boganto_admin_user')
   }

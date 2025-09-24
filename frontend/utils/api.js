@@ -1,7 +1,11 @@
 import axios from 'axios'
 
 // API base URL - works with Next.js environment variables and rewrites
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || (
+  typeof window !== 'undefined' 
+    ? '' // Use Next.js rewrites in browser
+    : 'http://localhost:8000' // Use direct URL for SSR
+)
 
 // Make sure we always have a valid base URL, even in SSR
 if (!API_BASE_URL) {
@@ -14,6 +18,7 @@ if (!API_BASE_URL) {
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
+  withCredentials: true, // Enable credentials for session cookies
   headers: {
     'Content-Type': 'application/json',
   }
